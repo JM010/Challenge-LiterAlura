@@ -1,5 +1,5 @@
 # 📚 Literalura
-![img.png](img.png)
+![img.png](src/main/resources/imagenes/img.png)
 
 Proyecto Java con **Spring Boot** orientado a consola (CLI) para consultar información de libros y autores desde una API pública, procesar los datos y persistirlos en una base de datos relacional.
 
@@ -151,7 +151,7 @@ Hibernate se encarga de crear o actualizar el esquema según la configuración J
 
 ## ✅ Insignia del challenge entregado
 
-![img_1.png](img_1.png)
+![img_1.png](src/main/resources/imagenes/Badge-Literalura.png)
 
 ## 📄 Licencia
 
