@@ -13,10 +13,7 @@ import com.JCservicios.literalura.service.ConvertirDatos;
 import com.JCservicios.literalura.service.LibroService;
 
 
-import java.util.DoubleSummaryStatistics;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -118,7 +115,7 @@ public class Principal {
     }
 
     private DatosBook getDatosBookPorTitulo(String titulo) {
-        String json = consumoAPI.obtenerDatos(  titulo, Busqueda.LIBRO_AUTOR.getCodigo());
+        String json = consumoAPI.obtenerDatos( titulo, Busqueda.LIBRO_AUTOR.getCodigo());
         return convertirDatos.convertirDatos(json,DatosBook.class) ;
     }
 
@@ -219,13 +216,13 @@ public class Principal {
                 ----------------------------------------
                 """);
 
-        DoubleSummaryStatistics ds = libroList.stream()
+        IntSummaryStatistics ds = libroList.stream()
                 .filter(libro -> libro.getDownloads()> 0)
-                .collect(Collectors.summarizingDouble(Libro::getDownloads));
+                .collect(Collectors.summarizingInt(Libro::getDownloads));
         System.out.println("Cantidad de Libros: " + ds.getCount());
         System.out.println("Descarga mínima: " + ds.getMin());
         System.out.println("Descarga máxima: " + ds.getMax());
-        System.out.println("Descarga promedio: " + ds.getAverage());
+        System.out.println("Descarga promedio: " + String.format("%.2f",ds.getAverage()));
         System.out.println("Sumatoria de Descargas: " + ds.getSum());
 
     }
