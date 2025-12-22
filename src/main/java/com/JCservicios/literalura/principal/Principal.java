@@ -24,6 +24,7 @@ public class Principal {
     private final AutorService autorService;
     private final LibroService librosService;
     private static final String MENSAJE_LIBROS_NO_REGISTRADOS = "No hay libros registrados en la base de datos.";
+    private static final String MENSAJE_VALOR_NULO = "Error, valor ingresado no puede estar vacío";
 
 
     public Principal(AutorService autorService, LibroService librosService) {
@@ -88,8 +89,18 @@ public class Principal {
                 """);
         System.out.print("Ingrese el titulo del libro a buscar: ");
         String titulo = sc.nextLine();
+        if (titulo.isBlank()){
+            System.out.println(MENSAJE_VALOR_NULO);
+            return;
+        }
         System.out.println("...Buscando libro 🔎 ");
-        DatosBook datosBook = getDatosBookPorTitulo(titulo);
+        DatosBook datosBook;
+        try {
+            datosBook = getDatosBookPorTitulo(titulo);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
 
         if (datosBook != null) {
             DatosAutor autorDTO = libroMapper.obtenerAutorPrincipal(datosBook.autores());
@@ -99,19 +110,18 @@ public class Principal {
                 autor = autorService.obtenerOCrear(autorDTO);
                 Libro libro = libroMapper.toEntity(datosBook, autor, idiomas);
                 Optional<Libro> libroBuscado = librosService.buscarPorTitulo(libro.getTitulo());
-                   if (libroBuscado.isPresent()){
-                       System.out.println("💾 -El libro ya existía en la base de datos, no se guardo una nueva entrada\n" + libroBuscado.get());
-                   }
-                   else {
-                          librosService.guardarLibro(libro);
-                          autor.agregarLibro(libro);
-                          System.out.println("✅-Libro guardado exitosamente:\n" + libro.toString());
-                   }
+                if (libroBuscado.isPresent()) {
+                    System.out.println("💾 -El libro ya existía en la base de datos, no se guardo una nueva entrada\n" + libroBuscado.get());
+                } else {
+                    librosService.guardarLibro(libro);
+                    autor.agregarLibro(libro);
+                    System.out.println("✅-Libro guardado exitosamente:\n" + libro.toString());
                 }
-
             } else {
                 System.out.println("Autor no encontrado para el libro proporcionado.");
+
             }
+        }
     }
 
     private DatosBook getDatosBookPorTitulo(String titulo) {
@@ -163,6 +173,10 @@ public class Principal {
         }
         System.out.print("Ingrese el código del idioma: ");
         String codigoIdioma = sc.nextLine();
+
+        if (codigoIdioma.isBlank()) {
+            System.out.println(MENSAJE_VALOR_NULO);
+        }
         Idiomas idiomaSeleccionado = Idiomas.obtenerPorNombre(codigoIdioma);
         var librosPorIdioma = librosService.listarLibrosPorIdioma(idiomaSeleccionado);
         if (librosPorIdioma.isEmpty()) {
@@ -181,7 +195,13 @@ public class Principal {
         System.out.print("Ingrese el nombre del autor a buscar:");
         String nombreAutor = sc.nextLine();
         System.out.println("...Buscando autor 🔎 ");
-        Optional<Autor> autorBuscado = autorService.buscarPorNombre(nombreAutor);
+        Optional<Autor> autorBuscado;
+        try {
+            autorBuscado = autorService.buscarPorNombre(nombreAutor);
+        } catch ( IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
         if (autorBuscado.isPresent()) {
             System.out.println("✅-Autor encontrado:\n" + autorBuscado.get());
         }else  {
@@ -197,7 +217,7 @@ public class Principal {
                 """);
         List<Libro>libroList = librosService.obtenerTop10Descargas();
         if (libroList.isEmpty()) {
-            System.out.println(MENSAJE_LIBROS_NO_REGISTRADOS);
+            System.out.println("No hay autores registrados");
         } else {
             libroList.forEach(System.out::println);
         }

@@ -23,18 +23,12 @@ public enum Idiomas {
 
    // Método para obtener el idioma por su nombre o codigo
     public static Idiomas obtenerPorNombre(String codigo) {
-            if (codigo.isEmpty() || codigo.isBlank()){
-                return UNKNOWN;
-            }
-
             for (Idiomas idioma : Idiomas.values()) {
                 if (idioma.name().equalsIgnoreCase(codigo) || idioma.getCodigo().equalsIgnoreCase(codigo)) {
                     return idioma;
                 }
             }
             return UNKNOWN;
-
-
     }
 
 }

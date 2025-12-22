@@ -38,11 +38,7 @@ public class LibroService {
     }
 
     public List<Libro> listarLibrosPorIdioma(Idiomas idioma) {
-        if(idioma ==  null ) {
-            throw new IllegalArgumentException("El idioma no puede ser null o vacío");
-        } else {
-            return repo.listarLibrosPorIdioma(idioma);
-        }
+        return repo.listarLibrosPorIdioma(idioma);
     }
 
     public List<Libro> obtenerTop10Descargas() {

@@ -1,6 +1,7 @@
 package com.JCservicios.literalura.service;
 
 
+import com.JCservicios.literalura.exepciones.NotFoundJsonExeption;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -17,12 +18,12 @@ public class ConvertirDatos implements IConvertirDatos {
             JsonNode jsonNode = objectMapper.readTree(json);
             JsonNode arraysNode = jsonNode.get("results");
 
-            if (arraysNode != null  && arraysNode.isArray() && arraysNode.size() > 0) {
+            if (arraysNode != null  && arraysNode.isArray() && !arraysNode.isEmpty()) {
                 JsonNode firstElement = arraysNode.get(0);
                 String firstElementJson = objectMapper.writeValueAsString(firstElement);
                 return objectMapper.readValue(firstElementJson, clase);
             } else {
-                throw new RuntimeException("No se encontraron resultados en el JSON.");
+                throw new NotFoundJsonExeption("No se ha encontraron un libro con ese titulo.");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -36,7 +37,7 @@ public class ConvertirDatos implements IConvertirDatos {
 
             JsonNode resultsArray = rootNode.get("results");
 
-            if (resultsArray != null && resultsArray.size() > 0) {
+            if (resultsArray != null && !resultsArray.isEmpty()) {
                 List<T> resultList = new ArrayList<>();
                 for (JsonNode node : resultsArray) {
                     T result = objectMapper.treeToValue(node, clase);
@@ -44,7 +45,7 @@ public class ConvertirDatos implements IConvertirDatos {
                 }
                 return resultList;
             } else {
-                throw new RuntimeException("No se encontraron resultados en el JSON.");
+                throw new NotFoundJsonExeption("No se encontraron resultados en el JSON.");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
